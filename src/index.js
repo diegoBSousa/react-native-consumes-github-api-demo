@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
+import './config/RectotronConfig';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +15,9 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
+
+console.tron.log('Hello World');
+console.tron.warn('Hello World');
 
 export default function App() {
   return (
