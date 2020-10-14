@@ -26,7 +26,11 @@ function Routes() {
             title: 'Users',
           }}
         />
-        <Stack.Screen name="User" component={User} />
+        <Stack.Screen
+          name="User"
+          component={User}
+          options={{title: 'Profile'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
