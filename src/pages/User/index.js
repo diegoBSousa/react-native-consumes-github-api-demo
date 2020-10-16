@@ -1,11 +1,24 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {View} from 'react-native';
 import api from '../../services/api';
-import {Container, Header, Avatar, Name, Bio} from './styles';
+import {
+  Container,
+  Header,
+  Avatar,
+  Name,
+  Bio,
+  Stars,
+  Starred,
+  OwnerAvatar,
+  Info,
+  Title,
+  Author,
+} from './styles';
 
-async function getStarredRepositories(user) {
-  return await api.get(`/users/${user}/starred`);
+async function getStarredRepositories(user, callback) {
+  const response = await api.get(`/users/${user}/starred`);
+  callback(response.data);
 }
 
 function User({navigation, route}) {
@@ -18,11 +31,10 @@ function User({navigation, route}) {
     });
   }, [navigation, name]);
 
-  const response = getStarredRepositories(user.login);
-
-  if (typeof response.data === 'array') {
-    const [stars, _] = useState(response.data);
-  }
+  const [stars, setStars] = useState([]);
+  useEffect(() => {
+    getStarredRepositories(user.login, setStars);
+  }, []);
 
   return (
     <Container>
@@ -31,22 +43,21 @@ function User({navigation, route}) {
         <Name>{user.name}</Name>
         <Bio>{user.bio}</Bio>
       </Header>
+      <Stars
+        data={stars}
+        keyExtractor={(star) => String(star.id)}
+        renderItem={({item}) => (
+          <Starred>
+            <OwnerAvatar source={{uri: item.owner.avatar_url}} />
+            <Info>
+              <Title>{item.name}</Title>
+              <Author>{item.owner.login}</Author>
+            </Info>
+          </Starred>
+        )}
+      />
     </Container>
   );
 }
-
-// User.PropTypes = {
-//  navigation: PropTypes.shape({
-//    setOptions: PropTypes.func.isRequired,
-//  }).isRequired,
-//  route: PropTypes.shape({
-//    params: PropTypes.shape({
-//      user: PropTypes.shape({
-//        name: PropTypes.string.isRequired,
-//        login: PropTypes.string.isRequired,
-//      }).isRequired,
-//    }).isRequired,
-//  }).isRequired,
-// };
 
 export default User;
